@@ -10,7 +10,7 @@
 // Animation flash red background color: `rgba(255, 91, 90, 0.5)`
 
 .orderBlock {
-  padding: 5px 10px;
+  padding: 5px 0;
   color: aliceblue;
   background-color: #131B29;
   width: 300px;
@@ -18,32 +18,42 @@
   .header {
     color: #F0F4F8;
     font-weight: 600;
+    padding-left: 10px;
   }
 
   .columnHeader {
-    font-size: 12px;
+    font-size: 14px;
     color: #8698aa;
     display: flex;
     padding: 15px 0;
-   
   }
 
   .quoteList {
     .quote {
       display: flex;
+      align-items: center;
       height: 28px;
+      line-height: 24px;
+
+      &:hover {
+        background: #1E3059 !important;
+      }
     }
   }
 
-  .prize {
+  .price {
     flex:1 0 30%;
+    padding-left: 10px;
   }
   .size {
+    text-align: right;
     flex:1 0 30%;
   }
   .total {
+    padding-right: 10px;
     text-align: right;
     flex:1 0 40%;
+    background: linear-gradient(to left, var(--color) var(--width), transparent var(--width)); 
   }
 
   .current{
@@ -73,7 +83,7 @@
 
 @keyframes fadeIn {
   from {
-    background-color: rgba(16, 186, 104, 0.12);
+    background-color: rgba(0, 177, 93, 0.5);
   }
   to {
     background-color: transparent;
@@ -95,4 +105,30 @@
 
 .updated {
   animation: flash 0.3s ease-in-out;
+}
+
+
+.asks-new {
+  animation: asksFadeIn 0.5s ease-in-out;
+}
+.asks-updated {
+  animation: asksFlash 0.3s ease-in-out;
+}
+
+@keyframes asksFadeIn {
+  from {
+    background-color: rgba(255, 91, 90, 0.5)
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+@keyframes asksFlash {
+  from {
+    background-color: rgba(255, 91, 90, 0.5);
+  }
+  to {
+    background-color: transparent;
+  }
 }
