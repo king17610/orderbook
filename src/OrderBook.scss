@@ -32,7 +32,7 @@
     .quote {
       display: flex;
       align-items: center;
-      height: 28px;
+      height: 30px;
       line-height: 24px;
 
       &:hover {
@@ -58,10 +58,19 @@
 
   .current{
     display: flex;
-    height: 28px;
+    height: 30px;
     justify-content: center;
     align-items: center;
     font-weight: 600;
+    background:rgba(134, 152, 170, 0.12) ;
+    color: #F0F4F8 ;
+    position: relative;
+    letter-spacing: 1.2px;
+
+    span {
+      position: relative;
+      font-size: 20px;
+    }
   }
 
   .currentBuy {
@@ -130,5 +139,23 @@
   }
   to {
     background-color: transparent;
+  }
+}
+
+.arrow {
+  mask-image: url('./IconArrowDown.svg');
+  width: 24px;
+  height: 24px;
+  
+  &.arrowDown {
+    background-color: #FF5B5A;
+  }
+
+  &.arrowUp {
+    transform: rotate(180deg);
+    background-color: #00b15d;
+  }
+  &.hidden {
+    display: none;
   }
 }

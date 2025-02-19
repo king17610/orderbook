@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./OrderBook.scss";
+import IconArrowDown from "./IconArrowDown.svg";
 
 function OrderBook() {
-  const [currentPrice, setCurrentPrice] = useState();
+  const [currentPrice, setCurrentPrice] = useState(0);
   const [currentType, setCurrentType] = useState("");
   const [orderList, setOrderList] = useState({
     bids: {},
@@ -10,30 +11,42 @@ function OrderBook() {
   });
 
   useEffect(() => {
-    // const priceSocket = new WebSocket("wss://ws.btse.com/ws/futures");
-    // priceSocket.onopen = () => {
-    //   priceSocket.send(
-    //     JSON.stringify({
-    //       op: "subscribe",
-    //       args: ["tradeHistoryApi:BTCPFC"],
-    //     })
-    //   );
-    // };
-    // priceSocket.onmessage = (event) => {
-    //   const res = JSON.parse(event.data);
+    const priceSocket = new WebSocket("wss://ws.btse.com/ws/futures");
+    priceSocket.onopen = () => {
+      priceSocket.send(
+        JSON.stringify({
+          op: "subscribe",
+          args: ["tradeHistoryApi:BTCPFC"],
+        })
+      );
+    };
+    priceSocket.onmessage = (event) => {
+      const res = JSON.parse(event.data);
+      const { data } = res;
+      if (data && data.length > 0) {
+        setCurrentPrice((prevCurrentPrice)=>{
+          console.log(data);
+          let mode = "";
+          if(prevCurrentPrice){
+            if(data[0].price > prevCurrentPrice){
+              mode = "more";
+            } else if(data[0].price < prevCurrentPrice) {
+              mode = "less"
+            }else{
+              mode = ""
+            }
+          }
 
-    //   if (res.data && res.data.length > 0) {
-    //     setCurrentPrice(
-    //       res.data[0].price.toLocaleString("en-US", {
-    //         minimumFractionDigits: 1, // 整數小數點補 0
-    //       })
-    //     );
-    //     console.log(res.data[0].side);
-    //     setCurrentType(res.data[0].side);
-    //   }
-    // };
-    // priceSocket.onerror = (error) => console.error("WebSocket Error:", error);
-    // priceSocket.onclose = () => console.log("Price WebSocket Closed");
+          setCurrentType(mode);
+
+          return(
+            data[0].price
+          )
+        });
+      }
+    };
+    priceSocket.onerror = (error) => console.error("WebSocket Error:", error);
+    priceSocket.onclose = () => console.log("Price WebSocket Closed");
 
     const orderBookSocket = new WebSocket("wss://ws.btse.com/ws/oss/futures");
     orderBookSocket.onopen = () => {
@@ -77,7 +90,7 @@ function OrderBook() {
     orderBookSocket.onclose = () => console.log("OrderBook WebSocket Closed");
 
     return () => {
-      // priceSocket.close();
+      priceSocket.close();
       orderBookSocket.close();
     };
   }, []);
@@ -164,7 +177,7 @@ function OrderBook() {
       };
     });
   }, [orderList.bids]);
-
+console.log(currentType);
   return (
     <div className="orderBlock">
       <div className="header">Order Book</div>
@@ -198,7 +211,14 @@ function OrderBook() {
         })}
       </div>
 
-      <div className={`current ${currentType === "BUY" ? "currentBuy" : "currentSell"}`}>{currentPrice}</div>
+      <div className={`current ${currentType === "" ? "" :(currentType === "more" ? "currentBuy" : "currentSell")}`}>
+        <span>
+          {currentPrice?.toLocaleString("en-US", {
+            minimumFractionDigits: 1, // 整數小數點補 0
+          })}
+        </span>
+        <img className={`arrow ${currentType === "" ? "hidden": currentType === "more" ? "arrowUp" : "arrowDown"}`} />
+      </div>
 
       <div className="quoteList buyQuote">
         {bidsList.map(({ price, size, isNew, isUpdated, total }, index) => {
