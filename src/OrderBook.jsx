@@ -46,51 +46,35 @@ function OrderBook() {
     };
 
     orderBookSocket.onmessage = (event) => {
-      const res = JSON.parse(event.data);
-      if (res.data?.type === "snapshot") {
-        console.log("OrderBook Snapshot:", res.data);
-      }
+      const { data } = JSON.parse(event.data);
+      setOrderList((prevOrderList) => {
+        // 使用函數式更新來確保獲取到最新的 state
+        let updatedBids = { ...prevOrderList.bids };
+        let updatedAsks = { ...prevOrderList.asks };
+        let init = data?.type === "snapshot";
 
-      let updatedBids = orderList.bids;
-      let updatedAsks =orderList.asks;
+        // if (data?.type === "snapshot") {
+        //   console.log("OrderBook Snapshot:", data);
+        //   updatedAsks = {}; // 清空
+        //   updatedBids = {}; // 清空
+        // }
 
-      if(res.data?.bids.length) {
-        let accumulatedBidTotal = 0;
-        res.data.bids.forEach(([price, size]) => {
-          const sizeInt = parseInt(size);
-    
-          if (sizeInt === 0) {
-            // 如果數量為 0，刪除該價格
-            delete updatedBids[price];
-          } else {
-            accumulatedBidTotal += sizeInt;
-            updatedBids[price] = { total: accumulatedBidTotal };
-          }
-        });
-      }
-  
-     
-      if(res.data?.asks.length) {
-        let updatedAsks = {};
-        let accumulatedAskTotal = 0;
-        res.data.asks.reverse().forEach(([price, size]) => {
-          const sizeInt = parseInt(size);
-    
-          if (sizeInt === 0) {
-            delete updatedAsks[price];
-          } else {
-            accumulatedAskTotal += sizeInt;
-            updatedAsks[price] = { total: accumulatedAskTotal };
-          }
-        });
-      }
+        if (data?.bids.length > 0) {
+          updatedBids = handleQuickList(data.bids, updatedBids, init);
+        }
 
-      console.log(updatedBids);
-      setOrderList({
-        bids: updatedBids,
-        asks: updatedAsks,
+        if (data?.asks.length > 0) {
+          updatedAsks = handleQuickList(data.asks, updatedAsks, init);
+        }
+
+        // console.log("Updated Bids:", updatedBids);
+
+        return {
+          bids: updatedBids,
+          asks: updatedAsks,
+        };
       });
-    }
+    };
 
     orderBookSocket.onerror = (error) => console.error("OrderBook WebSocket Error:", error);
     orderBookSocket.onclose = () => console.log("OrderBook WebSocket Closed");
@@ -101,6 +85,47 @@ function OrderBook() {
     };
   }, []);
 
+  const handleQuickList = (data, quickList, init) => {
+    data.forEach(([price, size]) => {
+      const sizeInt = parseInt(size);
+      if (sizeInt === 0) {
+        delete quickList[price]; // 刪除價格
+      } else {
+        const existing = quickList[price];
+
+        quickList[price] = {
+          size: sizeInt,
+          isNew: init ? false : !existing,
+          isUpdated: existing && existing.size !== sizeInt,
+        };
+      }
+    });
+  
+    return quickList;
+  };
+
+  // 移除掉animate class
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setOrderList((prevOrderList) => {
+        let updatedBids = { ...prevOrderList.bids };
+        let updatedAsks = { ...prevOrderList.asks };
+
+        Object.keys(updatedBids).forEach((price) => {
+          updatedBids[price] = { ...updatedBids[price], isNew: false, isUpdated: false };
+        });
+
+        Object.keys(updatedAsks).forEach((price) => {
+          updatedAsks[price] = { ...updatedAsks[price], isNew: false, isUpdated: false };
+        });
+
+        return { bids: updatedBids, asks: updatedAsks };
+      });
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [orderList]);
+
   return (
     <div className="orderBlock">
       <div className="header">Order Book</div>
@@ -110,24 +135,30 @@ function OrderBook() {
         <div className="total">Total</div>
       </div>
       <div className="quoteList sellQuote">
-        {/* {asksList?.slice(-8)?.map((_, index) => (
-          <div className="quote" key={index}>
-            <div className="prize sellColor"> {_.prize}</div>
-            <div className="size"> {_.size}</div>
-            <div className="total"> {_.total}</div>
-          </div>
-        ))} */}
+        {Object.entries(orderList.asks)
+          .sort((a, b) => parseFloat(b[0]) - parseFloat(a[0]))
+          .slice(-8)
+          .map(([prize, { size, isNew, isUpdated }], index) => (
+            <div className={`quote ${isNew ? "new" : ""}`} key={index}>
+              <div className="prize">{prize}</div>
+              <div className={`size ${isUpdated ? "updated" : ""}`}>{size}</div>
+              <div className="total">{size}</div>
+            </div>
+          ))}
       </div>
       <div className={`current ${currentType === "BUY" ? "currentBuy" : "currentSell"}`}>{currentPrice}</div>
 
       <div className="quoteList buyQuote">
-        {/* {bidsList?.slice(0,8)?.map((_, index) => (
-          <div className="quote" key={index}>
-            <div className="prize buyColor"> {_.prize}</div>
-            <div className="size"> {_.size}</div>
-            <div className="total"> {_.total}</div>
-          </div>
-        ))} */}
+        {Object.entries(orderList.bids)
+          .sort((a, b) => parseFloat(b[0]) - parseFloat(a[0]))
+          .slice(0, 8)
+          .map(([prize, { size, isNew, isUpdated }], index) => (
+            <div className={`quote ${isNew ? "new" : ""}`} key={index}>
+              <div className="prize">{prize}</div>
+              <div className={`size ${isUpdated ? "updated" : ""}`}>{size}</div>
+              <div className="total">{size}</div>
+            </div>
+          ))}
       </div>
     </div>
   );

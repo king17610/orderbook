@@ -70,3 +70,29 @@
     color: #FF5B5A;
   }
 }
+
+@keyframes fadeIn {
+  from {
+    background-color: rgba(16, 186, 104, 0.12);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+@keyframes flash {
+  from {
+    background-color: rgba(0, 177, 93, 0.5);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.new {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.updated {
+  animation: flash 0.3s ease-in-out;
+}
