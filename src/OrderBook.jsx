@@ -12,11 +12,23 @@ function OrderBook() {
   const orderBookSocketRef = useRef(null);
   const priceHeartbeatRef = useRef(null);
   const orderBookHeartbeatRef = useRef(null);
-  const isUnmounted = useRef(false);
+  const isUnmounted = useRef(false); // 判斷component是否卸載
   const lastSeqNumRef = useRef(null);
   const priceReconnectAttemptRef = useRef(0);
   const orderBookReconnectAttemptRef = useRef(0);
 
+  /**
+   * 建立/更新快查表
+   * @param {Array<Array<[string, string]>>} data - 各檔位的[price, size]陣列
+   * @param {Object} quickList - 已更新的快查表
+   * @param {boolean} init - 是否是snapShot
+   * @returns {Object<string, { size: number, isNew: boolean, isSizeIncreased: boolean, isSizeDecreased: boolean }>}
+   * 快查表的每個價格對應的資料。價格作為鍵值，資料包含以下屬性：
+   * @returns {number} quickList[price].size - 數量
+   * @returns {boolean} quickList[price].isNew - 是否是新資料
+   * @returns {boolean} quickList[price].isSizeIncreased - 訂單數量增加
+   * @returns {boolean} quickList[price].isSizeDecreased - 訂單數量減少
+   */
   const handleQuickList = (data, quickList, init) => {
     data.forEach(([price, size]) => {
       const sizeInt = parseInt(size);
@@ -24,11 +36,14 @@ function OrderBook() {
         delete quickList[price];
       } else {
         const existing = quickList[price];
+        const isSizeIncreased = existing && sizeInt > existing.size;
+        const isSizeDecreased = existing && sizeInt < existing.size;
 
         quickList[price] = {
           size: sizeInt,
           isNew: init ? false : !existing,
-          isUpdated: existing && existing.size !== sizeInt,
+          isSizeIncreased: isSizeIncreased,
+          isSizeDecreased: isSizeDecreased,
         };
       }
     });
@@ -51,7 +66,8 @@ function OrderBook() {
           price,
           size: data.size,
           isNew: data.isNew,
-          isUpdated: data.isUpdated,
+          isSizeIncreased: data.isSizeIncreased,
+          isSizeDecreased: data.isSizeDecreased,
           total,
         };
       })
@@ -70,7 +86,8 @@ function OrderBook() {
         price,
         size: data.size,
         isNew: data.isNew,
-        isUpdated: data.isUpdated,
+        isSizeIncreased: data.isSizeIncreased,
+        isSizeDecreased: data.isSizeDecreased,
         total,
       };
     });
@@ -264,13 +281,13 @@ function OrderBook() {
         let updatedAsks = { ...prevOrderList.asks };
 
         Object.keys(updatedBids).forEach((price) => {
-          updatedBids[price] = { ...updatedBids[price], isNew: false, isUpdated: false };
+          updatedBids[price] = { ...updatedBids[price], isNew: false, isSizeIncreased: false, isSizeDecreased: false };
         });
 
         Object.keys(updatedAsks)
           .sort((a, b) => parseFloat(b[0]) - parseFloat(a[0]))
           .forEach((price) => {
-            updatedAsks[price] = { ...updatedAsks[price], isNew: false, isUpdated: false };
+            updatedAsks[price] = { ...updatedAsks[price], isNew: false, isSizeIncreased: false, isSizeDecreased: false };
           });
 
         return { bids: updatedBids, asks: updatedAsks };
@@ -290,7 +307,7 @@ function OrderBook() {
       </div>
 
       <div className="quoteList sellQuote">
-        {asksList.map(({ price, size, isNew, isUpdated, total }, index) => {
+        {asksList.map(({ price, size, isNew, isSizeIncreased, isSizeDecreased, total }, index) => {
           return (
             <div className={`quote ${isNew ? "asks-new" : ""}`} key={index}>
               <div className="price buyColor">
@@ -298,7 +315,7 @@ function OrderBook() {
                   minimumFractionDigits: 1,
                 })}
               </div>
-              <div className={`size ${isUpdated ? "asks-updated" : ""}`}>{size.toLocaleString("en-US")}</div>
+              <div className={`size ${isSizeIncreased && "isSizeIncreased"} ${isSizeDecreased && "isSizeDecreased"}`}>{size.toLocaleString("en-US")}</div>
               <div
                 className="total"
                 style={{
@@ -327,7 +344,7 @@ function OrderBook() {
       </div>
 
       <div className="quoteList buyQuote">
-        {bidsList.map(({ price, size, isNew, isUpdated, total }, index) => {
+        {bidsList.map(({ price, size, isNew, isSizeIncreased, isSizeDecreased, total }, index) => {
           return (
             <div className={`quote ${isNew ? "new" : ""}`} key={index}>
               <div className="price sellColor">
@@ -335,7 +352,7 @@ function OrderBook() {
                   minimumFractionDigits: 1,
                 })}
               </div>
-              <div className={`size ${isUpdated ? "updated" : ""}`}>{size.toLocaleString("en-US")}</div>
+              <div className={`size ${isSizeIncreased && "isSizeIncreased"} ${isSizeDecreased && "isSizeDecreased"}`}>{size.toLocaleString("en-US")}</div>
               <div
                 className="total"
                 style={{

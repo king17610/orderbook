@@ -87,7 +87,7 @@
   }
 }
 
-@keyframes flash {
+@keyframes greenFlash {
   from {
     background-color: rgba(0, 177, 93, 0.5);
   }
@@ -101,8 +101,8 @@
   animation: fadeIn 0.5s ease-in-out;
 }
 
-.updated {
-  animation: flash 0.3s ease-in-out;
+.isSizeIncreased {
+  animation: greenFlash 0.3s ease-in-out;
 }
 
 
@@ -110,8 +110,8 @@
   animation: asksFadeIn 0.5s ease-in-out;
 }
 
-.asks-updated {
-  animation: asksFlash 0.3s ease-in-out;
+.isSizeDecreased {
+  animation: redFlash 0.3s ease-in-out;
 }
 
 @keyframes asksFadeIn {
@@ -124,7 +124,7 @@
   }
 }
 
-@keyframes asksFlash {
+@keyframes redFlash {
   from {
     background-color: rgba(255, 91, 90, 0.5);
   }
