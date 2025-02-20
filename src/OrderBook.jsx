@@ -1,6 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./OrderBook.scss";
 
+/**
+ * @typedef {Object} OrderData
+ * @property {string} price - 價格
+ * @property {number} size - 該檔位的數量
+ * @property {boolean} isNew - 是否為新資料
+ * @property {boolean} isSizeIncreased - 檔位數量是否增加
+ * @property {boolean} isSizeDecreased - 檔位數量是否減少
+ * @property {number} total - 目前已累計的總數
+ */
+
 function OrderBook() {
   const [currentPrice, setCurrentPrice] = useState(0);
   const [currentType, setCurrentType] = useState("");
@@ -26,8 +36,8 @@ function OrderBook() {
    * 快查表的每個價格對應的資料。價格作為鍵值，資料包含以下屬性：
    * @returns {number} quickList[price].size - 數量
    * @returns {boolean} quickList[price].isNew - 是否是新資料
-   * @returns {boolean} quickList[price].isSizeIncreased - 訂單數量增加
-   * @returns {boolean} quickList[price].isSizeDecreased - 訂單數量減少
+   * @returns {boolean} quickList[price].isSizeIncreased - 檔位數量是否增加
+   * @returns {boolean} quickList[price].isSizeDecreased - 檔位數量是否減少
    */
   const handleQuickList = (data, quickList, init) => {
     data.forEach(([price, size]) => {
@@ -51,6 +61,11 @@ function OrderBook() {
     return quickList;
   };
 
+  /**
+   * 計算並返回賣單asks的資料，排序並取出最後 8 筆資料。
+   * @function
+   * @returns {Array<OrderData>} 賣單資料列表
+   */
   const asksList = useMemo(() => {
     let sortedAsks = Object.entries(orderList.asks)
       .sort((a, b) => parseFloat(b[0]) - parseFloat(a[0]))
@@ -74,6 +89,11 @@ function OrderBook() {
       .reverse();
   }, [orderList.asks]);
 
+  /**
+   * 計算並返回買單bids的資料，經過排序並取出前 8 筆資料。
+   * @function
+   * @returns {Array<OrderData>} 買單資料列表，
+   */
   const bidsList = useMemo(() => {
     let sortedBids = Object.entries(orderList.bids)
       .sort((a, b) => parseFloat(b[0]) - parseFloat(a[0]))
@@ -287,7 +307,12 @@ function OrderBook() {
         Object.keys(updatedAsks)
           .sort((a, b) => parseFloat(b[0]) - parseFloat(a[0]))
           .forEach((price) => {
-            updatedAsks[price] = { ...updatedAsks[price], isNew: false, isSizeIncreased: false, isSizeDecreased: false };
+            updatedAsks[price] = {
+              ...updatedAsks[price],
+              isNew: false,
+              isSizeIncreased: false,
+              isSizeDecreased: false,
+            };
           });
 
         return { bids: updatedBids, asks: updatedAsks };
@@ -315,7 +340,9 @@ function OrderBook() {
                   minimumFractionDigits: 1,
                 })}
               </div>
-              <div className={`size ${isSizeIncreased && "isSizeIncreased"} ${isSizeDecreased && "isSizeDecreased"}`}>{size.toLocaleString("en-US")}</div>
+              <div className={`size ${isSizeIncreased && "isSizeIncreased"} ${isSizeDecreased && "isSizeDecreased"}`}>
+                {size.toLocaleString("en-US")}
+              </div>
               <div
                 className="total"
                 style={{
@@ -338,6 +365,7 @@ function OrderBook() {
         </span>
         <div className="arrowBlock">
           <img
+            alt="arrow"
             className={`arrow ${currentType === "" ? "hidden" : currentType === "more" ? "arrowUp" : "arrowDown"}`}
           />
         </div>
@@ -352,7 +380,9 @@ function OrderBook() {
                   minimumFractionDigits: 1,
                 })}
               </div>
-              <div className={`size ${isSizeIncreased && "isSizeIncreased"} ${isSizeDecreased && "isSizeDecreased"}`}>{size.toLocaleString("en-US")}</div>
+              <div className={`size ${isSizeIncreased && "isSizeIncreased"} ${isSizeDecreased && "isSizeDecreased"}`}>
+                {size.toLocaleString("en-US")}
+              </div>
               <div
                 className="total"
                 style={{
