@@ -1,6 +1,6 @@
 import React from "react"
 import './App.scss';
-import OrderBook from './Component/OrderBook';
+import OrderBook from './components/OrderBook';
 
 function App() {
   return (
