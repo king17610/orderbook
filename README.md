@@ -1,70 +1,76 @@
-# Getting Started with Create React App
+# Order Book
+Order Book 是一個基於 React 的應用程式，使用 `react-scripts` 進行開發與構建。
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 環境需求
 
-## Available Scripts
+請確保您的開發環境符合以下條件：
 
-In the project directory, you can run:
+- **Node.js**: **10.x 至 16.x**（**不建議使用 Node 17 或更高版本**，可能會遇到 Webpack 相關錯誤）
+- **npm**: 版本 6 以上
+
+或者降級至 LTS 版本（如 16.x）：
+
+### 建議使用
+- **node: v16.13.0**
+- **(npm v8.1.0)**
+
+```sh
+nvm use 16
+```
+
+## 安裝依賴
+
+在專案目錄中執行：
+
+```sh
+npm install
+```
+
+## 可用指令
+
+在專案目錄下，您可以使用以下指令：
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+啟動開發伺服器，打開瀏覽器進入 [http://localhost:3000](http://localhost:3000)。
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+打包專案至 `build` 資料夾，進行最佳化以供正式部署。
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### `npm test`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+執行測試。
 
 ### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+**警告**：此操作不可逆！
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+如果需要自定義 Webpack 配置，可以使用 `eject` 指令將所有配置文件與依賴分離。
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 主要技術棧
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- **React**: `16.9.0`
+- **React DOM**: `16.9.0`
+- **React Scripts**: `3.2.0`
+- **Sass**: `1.85.0`
+- **Sass Loader**: `10.4.1`
 
-## Learn More
+## 瀏覽器支援
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 生產環境
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- 市場佔有率 > 0.2%
+- 不支援過時的瀏覽器（如 IE）
+- 不支援 Opera Mini
 
-### Code Splitting
+### 開發環境
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- 最新的 Chrome、Firefox、Safari 版本
 
-### Analyzing the Bundle Size
+## 其他資訊
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+此專案基於 [Create React App](https://github.com/facebook/create-react-app) 建立，並使用 `react-app` 的 ESLint 規範來確保代碼品質。
 
-### Making a Progressive Web App
+如果有任何問題，請參考官方文件或聯絡專案維護者。
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
