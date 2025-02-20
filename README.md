@@ -10,13 +10,15 @@ Order Book 是一個基於 React 的應用程式，使用 `react-scripts` 進行
 
 或者降級至 LTS 版本（如 16.x）：
 
+```sh
+nvm use 16
+```
+
+
 ### 建議使用
 - **node: v16.13.0**
 - **(npm v8.1.0)**
 
-```sh
-nvm use 16
-```
 
 ## 安裝依賴
 
