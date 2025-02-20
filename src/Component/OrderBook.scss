@@ -10,13 +10,13 @@
 // Animation flash red background color: `rgba(255, 91, 90, 0.5)`
 
 .orderBlock {
+  // user-select: none;
   padding: 5px 0;
-  color: aliceblue;
+  color: #F0F4F8;
   background-color: #131B29;
   width: 300px;
 
   .header {
-    color: #F0F4F8;
     font-weight: 600;
     padding-left: 10px;
   }
@@ -58,6 +58,24 @@
     background: linear-gradient(to left, var(--color) var(--width), transparent var(--width));
   }
 
+  .current {
+    display: flex;
+    height: 30px;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    background: rgba(134, 152, 170, 0.12);
+    color: #F0F4F8;
+    position: relative;
+    letter-spacing: 1.2px;
+
+    span {
+      position: relative;
+      font-size: 20px;
+      transform: translate(9px);
+    }
+  }
+
   .currentBuy {
     background: rgba(16, 186, 104, 0.12);
     color: #00b15d;
@@ -68,55 +86,19 @@
     color: #FF5B5A;
   }
 
-  .sellColor {
+  .bidsColor {
     color: #00b15d;
   }
 
-  .buyColor {
+  .askColor {
     color: #FF5B5A;
   }
 }
 
-@keyframes fadeIn {
-  from {
-    background-color: rgba(0, 177, 93, 0.5);
-  }
-
-  to {
-    background-color: transparent;
-  }
-}
 
 @keyframes greenFlash {
   from {
     background-color: rgba(0, 177, 93, 0.5);
-  }
-
-  to {
-    background-color: transparent;
-  }
-}
-
-.new {
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-.isSizeIncreased {
-  animation: greenFlash 0.3s ease-in-out;
-}
-
-
-.asks-new {
-  animation: asksFadeIn 0.5s ease-in-out;
-}
-
-.isSizeDecreased {
-  animation: redFlash 0.3s ease-in-out;
-}
-
-@keyframes asksFadeIn {
-  from {
-    background-color: rgba(255, 91, 90, 0.5)
   }
 
   to {
@@ -134,26 +116,41 @@
   }
 }
 
+.isSizeIncreased {
+  animation: greenFlash 0.3s ease-in-out;
+}
 
+.isSizeDecreased {
+  animation: redFlash 0.3s ease-in-out;
+}
 
-.current {
-  display: flex;
-  height: 30px;
-  justify-content: center;
-  align-items: center;
-  font-weight: 600;
-  background: rgba(134, 152, 170, 0.12);
-  color: #F0F4F8;
-  position: relative;
-  letter-spacing: 1.2px;
+.asksNew {
+  animation: asksFadeIn 0.5s ease-in-out;
+}
 
-  span {
-    position: relative;
-    font-size: 20px;
-    transform: translate(9px);
+@keyframes asksFadeIn {
+  from {
+    background-color: rgba(255, 91, 90, 0.5)
+  }
+
+  to {
+    background-color: transparent;
   }
 }
 
+.bidsNew {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    background-color: rgba(0, 177, 93, 0.5);
+  }
+
+  to {
+    background-color: transparent;
+  }
+}
 
 .arrowBlock {
   width: 24px;
@@ -161,7 +158,8 @@
   transform: translate(9px);
 
   .arrow {
-    mask-image: url('./IconArrowDown.svg');
+    mask-image: url('../IconArrowDown.svg');
+    -webkit-mask-image: url('../IconArrowDown.svg');
     width: 24px;
     height: 24px;
 

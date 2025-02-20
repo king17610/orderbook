@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./OrderBook.scss";
+import Quote from "./Quote";
 
 /**
  * @typedef {Object} OrderData
  * @property {string} price - 價格
  * @property {number} size - 該檔位的數量
- * @property {boolean} isNew - 是否為新資料
+ * @property {boolean} isNewOrder - 是否為新資料
  * @property {boolean} isSizeIncreased - 檔位數量是否增加
  * @property {boolean} isSizeDecreased - 檔位數量是否減少
  * @property {number} total - 目前已累計的總數
@@ -27,15 +28,21 @@ function OrderBook() {
   const priceReconnectAttemptRef = useRef(0);
   const orderBookReconnectAttemptRef = useRef(0);
 
+  const formatNumber = (number, minimumFractionDigits = 0 ) => {
+    return number.toLocaleString("en-US", {
+      minimumFractionDigits: minimumFractionDigits,
+    });
+  };
+
   /**
    * 建立/更新快查表
    * @param {Array<Array<[string, string]>>} data - 各檔位的[price, size]陣列
    * @param {Object} quickList - 已更新的快查表
    * @param {boolean} init - 是否是snapShot
-   * @returns {Object<string, { size: number, isNew: boolean, isSizeIncreased: boolean, isSizeDecreased: boolean }>}
+   * @returns {Object<string, { size: number, isNewOrder: boolean, isSizeIncreased: boolean, isSizeDecreased: boolean }>}
    * 快查表的每個價格對應的資料。價格作為鍵值，資料包含以下屬性：
    * @returns {number} quickList[price].size - 數量
-   * @returns {boolean} quickList[price].isNew - 是否是新資料
+   * @returns {boolean} quickList[price].isNewOrder - 是否是新資料
    * @returns {boolean} quickList[price].isSizeIncreased - 檔位數量是否增加
    * @returns {boolean} quickList[price].isSizeDecreased - 檔位數量是否減少
    */
@@ -51,7 +58,7 @@ function OrderBook() {
 
         quickList[price] = {
           size: sizeInt,
-          isNew: init ? false : !existing,
+          isNewOrder: init ? false : !existing,
           isSizeIncreased: isSizeIncreased,
           isSizeDecreased: isSizeDecreased,
         };
@@ -80,7 +87,7 @@ function OrderBook() {
         return {
           price,
           size: data.size,
-          isNew: data.isNew,
+          isNewOrder: data.isNewOrder,
           isSizeIncreased: data.isSizeIncreased,
           isSizeDecreased: data.isSizeDecreased,
           total,
@@ -105,7 +112,7 @@ function OrderBook() {
       return {
         price,
         size: data.size,
-        isNew: data.isNew,
+        isNewOrder: data.isNewOrder,
         isSizeIncreased: data.isSizeIncreased,
         isSizeDecreased: data.isSizeDecreased,
         total,
@@ -301,7 +308,7 @@ function OrderBook() {
         let updatedAsks = { ...prevOrderList.asks };
 
         Object.keys(updatedBids).forEach((price) => {
-          updatedBids[price] = { ...updatedBids[price], isNew: false, isSizeIncreased: false, isSizeDecreased: false };
+          updatedBids[price] = { ...updatedBids[price], isNewOrder: false, isSizeIncreased: false, isSizeDecreased: false };
         });
 
         Object.keys(updatedAsks)
@@ -309,7 +316,7 @@ function OrderBook() {
           .forEach((price) => {
             updatedAsks[price] = {
               ...updatedAsks[price],
-              isNew: false,
+              isNewOrder: false,
               isSizeIncreased: false,
               isSizeDecreased: false,
             };
@@ -331,68 +338,50 @@ function OrderBook() {
         <div className="total">Total</div>
       </div>
 
-      <div className="quoteList sellQuote">
-        {asksList.map(({ price, size, isNew, isSizeIncreased, isSizeDecreased, total }, index) => {
+      <div className="quoteList">
+        {asksList.map(({ price, size, isNewOrder, isSizeIncreased, isSizeDecreased, total }, index) => {
           return (
-            <div className={`quote ${isNew ? "asks-new" : ""}`} key={index}>
-              <div className="price buyColor">
-                {Number(price).toLocaleString("en-US", {
-                  minimumFractionDigits: 1,
-                })}
-              </div>
-              <div className={`size ${isSizeIncreased && "isSizeIncreased"} ${isSizeDecreased && "isSizeDecreased"}`}>
-                {size.toLocaleString("en-US")}
-              </div>
-              <div
-                className="total"
-                style={{
-                  "--width": `${(total / asksList[0].total) * 100}%`,
-                  "--color": "rgba(255, 90, 90, 0.12)",
-                }}
-              >
-                {total.toLocaleString("en-US")}
-              </div>
-            </div>
+            <Quote
+              key={index}
+              price={formatNumber(Number(price), 1)}
+              size={formatNumber(size)}
+              total={formatNumber(total)}
+              isNewOrder={isNewOrder}
+              isSizeIncreased={isSizeIncreased}
+              isSizeDecreased={isSizeDecreased}
+              isAsk={true}
+              totalPercent={total / bidsList[bidsList.length - 1].total}
+            />
           );
         })}
       </div>
 
       <div className={`current ${currentType === "" ? "" : currentType === "more" ? "currentBuy" : "currentSell"}`}>
         <span>
-          {currentPrice?.toLocaleString("en-US", {
-            minimumFractionDigits: 1, // 整數小數點補 0
-          })}
+          {formatNumber(currentPrice, 1)}
         </span>
         <div className="arrowBlock">
           <img
-            alt="arrow"
+            alt=""
             className={`arrow ${currentType === "" ? "hidden" : currentType === "more" ? "arrowUp" : "arrowDown"}`}
           />
         </div>
       </div>
 
-      <div className="quoteList buyQuote">
-        {bidsList.map(({ price, size, isNew, isSizeIncreased, isSizeDecreased, total }, index) => {
+      <div className="quoteList">
+        {bidsList.map(({ price, size, isNewOrder, isSizeIncreased, isSizeDecreased, total }, index) => {
           return (
-            <div className={`quote ${isNew ? "new" : ""}`} key={index}>
-              <div className="price sellColor">
-                {Number(price).toLocaleString("en-US", {
-                  minimumFractionDigits: 1,
-                })}
-              </div>
-              <div className={`size ${isSizeIncreased && "isSizeIncreased"} ${isSizeDecreased && "isSizeDecreased"}`}>
-                {size.toLocaleString("en-US")}
-              </div>
-              <div
-                className="total"
-                style={{
-                  "--width": `${(total / bidsList[bidsList.length - 1].total) * 100}%`,
-                  "--color": "rgba(16, 186, 104, 0.12)",
-                }}
-              >
-                {total.toLocaleString("en-US")}
-              </div>
-            </div>
+            <Quote
+              key={index}
+              price={formatNumber(Number(price), 1)}
+              size={formatNumber(size)}
+              total={formatNumber(total)}
+              isNewOrder={isNewOrder}
+              isSizeIncreased={isSizeIncreased}
+              isSizeDecreased={isSizeDecreased}
+              isAsk={false}
+              totalPercent={total / asksList[0].total}
+            />
           );
         })}
       </div>
