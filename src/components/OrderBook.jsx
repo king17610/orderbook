@@ -28,7 +28,7 @@ function OrderBook() {
   const priceReconnectAttemptRef = useRef(0);
   const orderBookReconnectAttemptRef = useRef(0);
 
-  const formatNumber = (number, minimumFractionDigits = 0 ) => {
+  const formatNumber = (number, minimumFractionDigits = 0) => {
     return number.toLocaleString("en-US", {
       minimumFractionDigits: minimumFractionDigits,
     });
@@ -308,7 +308,12 @@ function OrderBook() {
         let updatedAsks = { ...prevOrderList.asks };
 
         Object.keys(updatedBids).forEach((price) => {
-          updatedBids[price] = { ...updatedBids[price], isNewOrder: false, isSizeIncreased: false, isSizeDecreased: false };
+          updatedBids[price] = {
+            ...updatedBids[price],
+            isNewOrder: false,
+            isSizeIncreased: false,
+            isSizeDecreased: false,
+          };
         });
 
         Object.keys(updatedAsks)
@@ -324,7 +329,7 @@ function OrderBook() {
 
         return { bids: updatedBids, asks: updatedAsks };
       });
-    }, 100);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [orderList]);
@@ -356,14 +361,12 @@ function OrderBook() {
         })}
       </div>
 
-      <div className={`current ${currentType === "" ? "" : currentType === "more" ? "currentBuy" : "currentSell"}`}>
-        <span>
-          {formatNumber(currentPrice, 1)}
-        </span>
+      <div className={`current ${currentType === "more" ? "currentBuy" : currentType === "less" ? "currentSell" : ""}`}>
+        <span>{formatNumber(currentPrice, 1)}</span>
         <div className="arrowBlock">
           <img
             alt=""
-            className={`arrow ${currentType === "" ? "hidden" : currentType === "more" ? "arrowUp" : "arrowDown"}`}
+            className={`arrow ${currentType === "more" ? "arrowUp" : currentType === "less" ? "arrowDown" : ""}`}
           />
         </div>
       </div>
