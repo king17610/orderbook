@@ -40,16 +40,6 @@ npm install
 
 打包專案至 `build` 資料夾，進行最佳化以供正式部署。
 
-### `npm test`
-
-執行測試。
-
-### `npm run eject`
-
-**警告**：此操作不可逆！
-
-如果需要自定義 Webpack 配置，可以使用 `eject` 指令將所有配置文件與依賴分離。
-
 ## Docker 部署
 
 ### 建立 Docker 映像
