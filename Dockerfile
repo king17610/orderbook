@@ -1,8 +1,6 @@
 # 使用 Node.js 16.13.0 作為基礎映像
 FROM node:16.13.0
 
-ENV HOST=0.0.0.0
-
 # 設定工作目錄
 WORKDIR /app
 
@@ -23,3 +21,4 @@ EXPOSE 3000
 
 # 啟動 React 應用
 CMD ["npm", "start"]
+

@@ -1,4 +1,5 @@
 # Order Book
+
 Order Book 是一個基於 React 的應用程式，使用 `react-scripts` 進行開發與構建。
 
 ## 環境需求
@@ -14,11 +15,10 @@ Order Book 是一個基於 React 的應用程式，使用 `react-scripts` 進行
 nvm use 16
 ```
 
-
 ### 建議使用
+
 - **node: v16.13.0**
 - **(npm v8.1.0)**
-
 
 ## 安裝依賴
 
@@ -49,6 +49,20 @@ npm install
 **警告**：此操作不可逆！
 
 如果需要自定義 Webpack 配置，可以使用 `eject` 指令將所有配置文件與依賴分離。
+
+## Docker 部署
+
+### 建立 Docker 映像
+
+```sh
+docker build -t btse-orderbook .
+```
+
+### 運行 Docker 容器
+
+```sh
+docker run -it -p 3000:3000 btse-orderbook
+```
 
 ## 主要技術棧
 
