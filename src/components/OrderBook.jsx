@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./OrderBook.scss";
 import Quote from "./Quote";
 
@@ -33,6 +33,23 @@ function OrderBook() {
       minimumFractionDigits: minimumFractionDigits,
     });
   };
+
+  const deepCopy = useCallback((inputObject) => {
+    if (typeof inputObject !== "object" || inputObject === null) {
+      return inputObject;
+    }
+
+    const outputObject = Array.isArray(inputObject) ? [] : {};
+
+    for (let key in inputObject) {
+      if (inputObject.hasOwnProperty(key)) {
+        const value = inputObject[key];
+        outputObject[key] = deepCopy(value);
+      }
+    }
+
+    return outputObject;
+  }, []);
 
   /**
    * 建立/更新快查表
@@ -232,8 +249,8 @@ function OrderBook() {
         }
 
         setOrderList((prevOrderList) => {
-          let updatedBids = { ...prevOrderList.bids };
-          let updatedAsks = { ...prevOrderList.asks };
+          let updatedBids = deepCopy(prevOrderList.bids);
+          let updatedAsks = deepCopy(prevOrderList.asks);
           let init = data?.type === "snapshot";
 
           if (init) {
@@ -304,8 +321,8 @@ function OrderBook() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setOrderList((prevOrderList) => {
-        let updatedBids = { ...prevOrderList.bids };
-        let updatedAsks = { ...prevOrderList.asks };
+        let updatedBids = deepCopy(prevOrderList.bids);
+        let updatedAsks = deepCopy(prevOrderList.asks);
 
         Object.keys(updatedBids).forEach((price) => {
           updatedBids[price] = {
