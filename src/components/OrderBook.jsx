@@ -349,7 +349,7 @@ function OrderBook() {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [orderList]);
+  }, [orderList.asks, orderList.bids]);
 
   return (
     <div className="orderBlock">
