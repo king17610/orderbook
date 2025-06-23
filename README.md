@@ -40,6 +40,10 @@ npm install
 
 打包專案至 `build` 資料夾，進行最佳化以供正式部署。
 
+## Demo
+
+Demo URL: [https://orderbook-eight.vercel.app/](https://orderbook-eight.vercel.app/)
+
 ## Docker 部署
 
 ### 建立 Docker 映像
