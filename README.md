@@ -6,7 +6,7 @@ Order Book 是一個基於 React 的應用程式，使用 `react-scripts` 進行
 
 請確保您的開發環境符合以下條件：
 
-- **Node.js**: **10.x 至 16.x**（**不建議使用 Node 17 或更高版本**，可能會遇到 Webpack 相關錯誤）
+- **Node.js**: **10.x 至 最新版本**（建議使用 Node 16.x，但專案已設定 cross-env 處理 OpenSSL 錯誤，因此 Node 17 或更高版本也可正常執行）
 - **npm**: 版本 6 以上
 
 或者降級至 LTS 版本（如 16.x）：
